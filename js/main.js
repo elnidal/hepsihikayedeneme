@@ -370,5 +370,67 @@ async function fetchPosts() {
     }
 }
 
+// Function to fetch posts by category
+async function fetchPostsByCategory(category = null) {
+    try {
+        const query = {
+            content_type: 'blogPost',
+            order: '-sys.createdAt'
+        };
+        
+        if (category) {
+            query['fields.category'] = category;
+        }
+        
+        const entries = await contentfulClient.getEntries(query);
+        
+        const postsContainer = document.querySelector('.posts-container');
+        postsContainer.innerHTML = ''; // Clear existing posts
+        
+        entries.items.forEach(entry => {
+            const post = entry.fields;
+            const images = post.images ? post.images.map(image => image.fields.file.url) : [];
+            
+            const postHTML = createPostHTML(
+                post.title,
+                post.content,
+                images.map(url => ({ dataUrl: url }))
+            );
+            
+            postsContainer.insertAdjacentHTML('beforeend', postHTML);
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+    }
+}
+
+// Add click handlers for category navigation
+document.addEventListener('DOMContentLoaded', () => {
+    // Set up category links
+    const categoryLinks = {
+        'hepsi-roman': document.querySelector('[data-category="hepsi-roman"]'),
+        'hepsi-siir': document.querySelector('[data-category="hepsi-siir"]'),
+        'hepsi-blog': document.querySelector('[data-category="hepsi-blog"]'),
+        'hepsi-blog-real': document.querySelector('[data-category="hepsi-blog-real"]')
+    };
+
+    // Add click handlers
+    Object.entries(categoryLinks).forEach(([category, link]) => {
+        if (link) {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Update active state
+                Object.values(categoryLinks).forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                // Fetch posts for this category
+                fetchPostsByCategory(category);
+            });
+        }
+    });
+
+    // Load all posts initially
+    fetchPostsByCategory();
+});
+
 // Load posts when page loads
 document.addEventListener('DOMContentLoaded', fetchPosts);

@@ -79,6 +79,25 @@ body {
     text-decoration: none;
 }
 
+.nav-link {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(231, 111, 81, 0.1);
+    color: #E76F51;
+}
+
+.nav-link.active {
+    background-color: #E76F51;
+    color: white;
+}
+
 /* Content Header */
 .content-header {
     margin-bottom: 2rem;

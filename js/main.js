@@ -341,3 +341,34 @@ window.onclick = function(event) {
         hideNewPostForm();
     }
 };
+
+// Function to fetch posts from Contentful
+async function fetchPosts() {
+    try {
+        const entries = await contentfulClient.getEntries({
+            content_type: 'blogPost',
+            order: '-sys.createdAt'
+        });
+        
+        const postsContainer = document.querySelector('.posts-container');
+        postsContainer.innerHTML = ''; // Clear existing posts
+        
+        entries.items.forEach(entry => {
+            const post = entry.fields;
+            const images = post.images ? post.images.map(image => image.fields.file.url) : [];
+            
+            const postHTML = createPostHTML(
+                post.title,
+                post.content,
+                images.map(url => ({ dataUrl: url }))
+            );
+            
+            postsContainer.insertAdjacentHTML('beforeend', postHTML);
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+    }
+}
+
+// Load posts when page loads
+document.addEventListener('DOMContentLoaded', fetchPosts);

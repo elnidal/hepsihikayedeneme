@@ -387,6 +387,11 @@ async function fetchPostsByCategory(category = null) {
         const postsContainer = document.querySelector('.posts-container');
         postsContainer.innerHTML = ''; // Clear existing posts
         
+        if (entries.items.length === 0) {
+            postsContainer.innerHTML = '<div class="no-posts">Bu kategoride henüz yazı bulunmamaktadır.</div>';
+            return;
+        }
+        
         entries.items.forEach(entry => {
             const post = entry.fields;
             const images = post.images ? post.images.map(image => image.fields.file.url) : [];
@@ -404,32 +409,35 @@ async function fetchPostsByCategory(category = null) {
     }
 }
 
-// Add click handlers for category navigation
-document.addEventListener('DOMContentLoaded', () => {
-    // Set up category links
-    const categoryLinks = {
-        'hepsi-roman': document.querySelector('[data-category="hepsi-roman"]'),
-        'hepsi-siir': document.querySelector('[data-category="hepsi-siir"]'),
-        'hepsi-blog': document.querySelector('[data-category="hepsi-blog"]'),
-        'hepsi-blog-real': document.querySelector('[data-category="hepsi-blog-real"]')
-    };
-
-    // Add click handlers
-    Object.entries(categoryLinks).forEach(([category, link]) => {
-        if (link) {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Update active state
-                Object.values(categoryLinks).forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                // Fetch posts for this category
-                fetchPostsByCategory(category);
-            });
-        }
+// Initialize category functionality
+function initializeCategories() {
+    const navButtons = document.querySelectorAll('.nav-button');
+    
+    navButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from all buttons
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Get category and fetch posts
+            const category = button.getAttribute('data-category');
+            console.log('Selected category:', category); // Debug log
+            fetchPostsByCategory(category);
+        });
     });
+    
+    // Load initial posts (all or default category)
+    const defaultCategory = document.querySelector('.nav-button.active')?.getAttribute('data-category');
+    fetchPostsByCategory(defaultCategory);
+}
 
-    // Load all posts initially
-    fetchPostsByCategory();
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeCategories();
 });
 
 // Load posts when page loads

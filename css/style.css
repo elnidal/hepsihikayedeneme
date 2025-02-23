@@ -63,20 +63,23 @@ body {
 }
 
 .nav-button {
-    padding: 0.5rem 1.5rem;
-    text-decoration: none;
     color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 5px;
     border-radius: 20px;
-    font-size: 0.9rem;
     transition: all 0.3s ease;
-    border: 1px solid transparent;
+    cursor: pointer;
 }
 
-.nav-button:hover,
+.nav-button:hover {
+    background-color: rgba(231, 111, 81, 0.1);
+    color: #E76F51;
+}
+
 .nav-button.active {
-    background-color: #FFE15D;
-    color: #333;
-    text-decoration: none;
+    background-color: #E76F51;
+    color: white;
 }
 
 .nav-link {
@@ -252,6 +255,14 @@ body {
     color: #666;
     cursor: pointer;
     padding: 0.5rem;
+}
+
+/* No Posts Message */
+.no-posts {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
 }
 
 /* New Post Button */
